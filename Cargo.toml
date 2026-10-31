@@ -1,0 +1,7 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/core_engine",
+    "crates/sync_fs",
+    "crates/tui_app",
+]
