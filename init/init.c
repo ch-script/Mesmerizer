@@ -106,6 +106,23 @@ int main(void) {
         log_msg("ERROR", "we coulndt get the IP address somehow");
     }
 
+    // SSH
+    log_msg("INFO", "Enabling sshd...");
+    char *sshd_enable[] = {"sysrc", "sshd_enable=YES", NULL};
+    run_cmd("sysrc", sshd_enable);
+
+    char *sshd_status[] = {"service", "sshd", "onestatus", NULL};
+    if (run_cmd("service", sshd_status) != 0) {
+        char *sshd_start[] = {"service", "sshd", "onestart", NULL};
+        if (run_cmd("service", sshd_start) != 0) {
+            log_msg("ERROR", "couldnt start sshd");
+        } else {
+            log_msg("SUCCESS", "sshd started");
+        }
+    } else {
+        log_msg("INFO", "sshd already running");
+    }
+
     log_msg("SUCCESS", "its okay...");
     return EXIT_SUCCESS;
 }
