@@ -1,0 +1,40 @@
+# Sonata Customs Configuration
+# ---------------------------
+
+# Local Infrastructure Commands (Executed on your laptop)
+[server]
+mount = "sudo mount -t nfs -o nfsvers=3,nolock,soft,timeo=30 100.102.144.38:/zroot/media ~/Server"
+umount = "sudo umount -f -l ~/Server"
+
+[ssh]
+enable = "ssh chompi@100.102.144.38"
+
+# Remote Download Module
+# ---------------------------
+
+# Torrents with aria2c (Download directly to the Server storage)
+[download.torrent]
+magnet = { cmd = "aria2c --seed-time=0 '{1}'", target = "remote", ip = "100.102.144.38", port = 9999 }
+magnet_to_path = { cmd = "aria2c --dir='{2}' --seed-time=0 '{1}'", target = "remote", ip = "100.102.144.38", port = 9999 }
+file = { cmd = "aria2c --seed-time=0 '{1}'", target = "remote", ip = "100.102.144.38", port = 9999 }
+
+
+# Downloads with yt-dlp (Audio, Video & Playlists)
+[download.yt]
+video = { cmd = "yt-dlp -f 'bv*+ba/b' -o '%(title)s.%(ext)s' '{1}'", target = "remote", ip = "100.102.144.38", port = 9999 }
+audio_mp3 = { cmd = "yt-dlp -x --audio-format mp3 --audio-quality 0 '{1}'", target = "remote", ip = "100.102.144.38", port = 9999 }
+audio_best = { cmd = "yt-dlp -x '{1}'", target = "remote", ip = "100.102.144.38", port = 9999 }
+playlist_audio = { cmd = "yt-dlp -x --audio-format mp3 -o '%(playlist_index)s - %(title)s.%(ext)s' '{1}'", target = "remote", ip = "100.102.144.38", port = 9999 }
+thumbnail = { cmd = "yt-dlp --write-thumbnail --skip-download '{1}'", target = "remote", ip = "100.102.144.38", port = 9999 }
+
+
+# Bulk File Downloads with aria2c (Multi-Connection)
+[download.files]
+fast_file = { cmd = "aria2c -x 16 -s 16 -o '{2}' '{1}'", target = "remote", ip = "100.102.144.38", port = 9999 }
+batch_list = { cmd = "aria2c -i '{1}'", target = "remote", ip = "100.102.144.38", port = 9999 }
+
+
+# Web Galleries with gallery-dl
+[download.gallery]
+url = { cmd = "gallery-dl '{1}'", target = "remote", ip = "100.102.144.38", port = 9999 }
+url_to_path = { cmd = "gallery-dl --directory '{2}' '{1}'", target = "remote", ip = "100.102.144.38", port = 9999 }
