@@ -58,7 +58,7 @@ fn main() {
     });
 
     println!("---------------------------------------");
-    println!("Mesmerizer Core Engine (sntd) Active");
+    println!("Mesmerizer Core Engine");
     println!("Listening for connections on: {}", bind_addr);
     println!("---------------------------------------");
 
