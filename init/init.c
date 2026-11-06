@@ -4,6 +4,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <time.h>
+#include <string.h>
 
 void log_msg(const char *level, const char *msg) {
     time_t now;
@@ -42,7 +43,7 @@ int main(void) {
 
     log_msg("INFO", "Verifyng ZFS zroot/media dataset");
     char *zfs_create[] = {"zfs", "create", "-o", "compression=zstd", "zroot/media", NULL};
-    run_cmd("zfs", zfs_create); // mostly for computers that dont have it already
+    run_cmd("zfs", zfs_create);
 
     // NFS exportation over Tailscale net
     log_msg("INFO", "Configuring sharenfs...");
@@ -53,8 +54,27 @@ int main(void) {
         tailnet_range = "100.64.0.0/10";
     }
 
+    char target_user[64] = {0};
+    const char *sudo_user = getenv("SUDO_USER");
+
+    if (sudo_user != NULL && strlen(sudo_user) > 0) {
+        strncpy(target_user, sudo_user, sizeof(target_user) - 1);
+        printf("[INFO] Detected SUDO_USER: %s\n", target_user);
+    } else {
+        printf("Enter the standard user for NFS mapall (e.g., your username): ");
+        fflush(stdout);
+        if (fgets(target_user, sizeof(target_user), stdin) != NULL) {
+            target_user[strcspn(target_user, "\n")] = 0;
+        }
+    }
+
+    if (strlen(target_user) == 0) {
+        log_msg("ERROR", "No user provided for NFS mapping. Exiting.");
+        return EXIT_FAILURE;
+    }
+
     char nfs_option[128];
-    snprintf(nfs_option, sizeof(nfs_option), "sharenfs=maproot=root -network %s", tailnet_range);
+    snprintf(nfs_option, sizeof(nfs_option), "sharenfs=mapall=%s -network %s", target_user, tailnet_range);
 
     char *zfs_nfs[] = {"zfs", "set", nfs_option, "zroot/media", NULL};
     if (run_cmd("zfs", zfs_nfs) != 0) {
@@ -75,7 +95,6 @@ int main(void) {
     log_msg("INFO", "Starting Tailscale daemon..");
     char *tailscale_args[] = {"service", "tailscaled", "onestart", NULL};
     run_cmd("service", tailscale_args);
-
 
     char *zfs_acl1[] = {"zfs", "set", "aclmode=passthrough", "zroot/media", NULL};
     run_cmd("zfs", zfs_acl1);
