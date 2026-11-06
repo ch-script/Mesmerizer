@@ -20,10 +20,9 @@ fn handle_client(stream: TcpStream) {
                 println!("[sntd] Command received: {}", cmd);
                 // in the following order:
                 // Log the incoming job into the SQLite database
-                let home_dir = env::var("HOME").unwrap_or_else(|_| String::from("."));
-                let db_path = format!("{}/mesmerizer.db", home_dir);
+                let db_path = "/zroot/media/mesmerizer.db";
 
-                if let Ok(conn) = Connection::open(&db_path) {
+                if let Ok(conn) = Connection::open(db_path) {
                     match conn.execute(
                         "INSERT INTO downloads (command, status) VALUES (?1, ?2)",
                         (cmd, "running"),

@@ -1,12 +1,8 @@
 use rusqlite::{Connection, Result};
-use std::env;
 
 pub fn init_db() -> Result<Connection> {
-    // Fetch the HOME environment variable, fallback to current directory if it fails
-    let home_dir = env::var("HOME").unwrap_or_else(|_| String::from("."));
-    let db_path = format!("{}/mesmerizer.db", home_dir);
-
-    let conn = Connection::open(&db_path)?;
+    let db_path = "/zroot/media/mesmerizer.db";
+    let conn = Connection::open(db_path)?;
 
     conn.execute(
         "CREATE TABLE IF NOT EXISTS downloads (
