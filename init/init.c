@@ -123,6 +123,15 @@ int main(void) {
         log_msg("INFO", "sshd already running");
     }
 
+    // SNTSV_D Daemon
+    log_msg("INFO", "Starting Sonata Server Daemon...");
+    if (fork() == 0) {
+        char *sntd_args[] = {"/usr/local/bin/sntd", NULL};
+        execv(sntd_args[0], sntd_args);
+        execvp("sntd", sntd_args);
+        exit(1);
+    }
+
     log_msg("SUCCESS", "its okay...");
     return EXIT_SUCCESS;
 }

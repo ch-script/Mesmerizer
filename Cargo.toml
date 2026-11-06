@@ -1,7 +1,7 @@
 [workspace]
 resolver = "2"
 members = [
-    "crates/core_engine",
-    "crates/sync_fs",
-    "crates/tui_app",
+    "modules/core_engine",
+    "modules/sync_fs",
+    "modules/interface",
 ]
