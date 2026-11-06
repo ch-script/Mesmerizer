@@ -5,6 +5,7 @@ use std::net::{TcpListener, TcpStream};
 use std::process::Command;
 use std::thread;
 use rusqlite::Connection; // Added for database interaction
+use std::env;
 
 /// Handles an individual client connection in isolation
 fn handle_client(stream: TcpStream) {
@@ -19,7 +20,10 @@ fn handle_client(stream: TcpStream) {
                 println!("[sntd] Command received: {}", cmd);
                 // in the following order:
                 // Log the incoming job into the SQLite database
-                if let Ok(conn) = Connection::open("mesmerizer.db") {
+                let home_dir = env::var("HOME").unwrap_or_else(|_| String::from("."));
+                let db_path = format!("{}/mesmerizer.db", home_dir);
+
+                if let Ok(conn) = Connection::open(&db_path) {
                     match conn.execute(
                         "INSERT INTO downloads (command, status) VALUES (?1, ?2)",
                         (cmd, "running"),

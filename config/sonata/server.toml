@@ -14,27 +14,26 @@ enable = "ssh chompi@100.102.144.38"
 
 # Torrents with aria2c (Download directly to the Server storage)
 [download.torrent]
-magnet = { cmd = "aria2c --seed-time=0 '{1}'", target = "remote", ip = "100.102.144.38", port = 9999 }
-magnet_to_path = { cmd = "aria2c --dir='{2}' --seed-time=0 '{1}'", target = "remote", ip = "100.102.144.38", port = 9999 }
-file = { cmd = "aria2c --seed-time=0 '{1}'", target = "remote", ip = "100.102.144.38", port = 9999 }
+magnet = { cmd = "mkdir -p ~/Server/Video && cd ~/Server/Video && aria2c --seed-time=0 '{1}'", target = "remote", ip = "100.102.144.38", port = 9999 }
+magnet_to_path = { cmd = "mkdir -p ~/Server/'{2}' && cd ~/Server/'{2}' && aria2c --seed-time=0 '{1}'", target = "remote", ip = "100.102.144.38", port = 9999 }
+file = { cmd = "mkdir -p ~/Server/ && cd ~/Server/ && aria2c --seed-time=0 '{1}'", target = "remote", ip = "100.102.144.38", port = 9999 }
 
 
 # Downloads with yt-dlp (Audio, Video & Playlists)
 [download.yt]
-video = { cmd = "yt-dlp -f 'bv*+ba/b' -o '%(title)s.%(ext)s' '{1}'", target = "remote", ip = "100.102.144.38", port = 9999 }
-audio_mp3 = { cmd = "yt-dlp -x --audio-format mp3 --audio-quality 0 '{1}'", target = "remote", ip = "100.102.144.38", port = 9999 }
-audio_best = { cmd = "yt-dlp -x '{1}'", target = "remote", ip = "100.102.144.38", port = 9999 }
-playlist_audio = { cmd = "yt-dlp -x --audio-format mp3 -o '%(playlist_index)s - %(title)s.%(ext)s' '{1}'", target = "remote", ip = "100.102.144.38", port = 9999 }
-thumbnail = { cmd = "yt-dlp --write-thumbnail --skip-download '{1}'", target = "remote", ip = "100.102.144.38", port = 9999 }
+video = { cmd = "mkdir -p ~/Server/Video && cd ~/Server/Video &&yt-dlp -f 'bv*[ext=mp4]+ba[ext=m4a]/b[ext=mp4]' --merge-output-format mp4 -o '%(title)s.%(ext)s' '{1}'", target = "remote", ip = "100.102.144.38", port = 9999 }
+audio_mp3 = { cmd = "mkdir -p ~/Server/Music && cd ~/Server/Music && yt-dlp -x --audio-format mp3 --audio-quality 0 -o '%(title)s.%(ext)s' '{1}'", target = "remote", ip = "100.102.144.38", port = 9999 }
+audio_best = { cmd = "mkdir -p ~/Server/Music && cd ~/Server/Music && yt-dlp -x -o '%(title)s.%(ext)s' '{1}'", target = "remote", ip = "100.102.144.38", port = 9999 }
+playlist = { cmd = "mkdir -p ~/Server/Music/'{1}' && cd ~/Server/Music/'{1}' && yt-dlp -x --audio-format mp3 -o '%(playlist_index)s - %(title)s.%(ext)s' '{2}'", target = "remote", ip = "100.102.144.38", port = 9999 }
+thumbnail = { cmd = "mkdir -p ~/Server/Images && cd ~/Server/Images && yt-dlp --write-thumbnail --skip-download '{1}'", target = "remote", ip = "100.102.144.38", port = 9999 }
 
 
 # Bulk File Downloads with aria2c (Multi-Connection)
 [download.files]
-fast_file = { cmd = "aria2c -x 16 -s 16 -o '{2}' '{1}'", target = "remote", ip = "100.102.144.38", port = 9999 }
-batch_list = { cmd = "aria2c -i '{1}'", target = "remote", ip = "100.102.144.38", port = 9999 }
-
+fast_file = { cmd = "mkdir -p ~/Server && cd ~/Server && aria2c -x 16 -s 16 -o '{2}' '{1}'", target = "remote", ip = "100.102.144.38", port = 9999 }
+batch_list = { cmd = "mkdir -p ~/Server && cd ~/Server && aria2c -i '{1}'", target = "remote", ip = "100.102.144.38", port = 9999 }
 
 # Web Galleries with gallery-dl
 [download.gallery]
-url = { cmd = "gallery-dl '{1}'", target = "remote", ip = "100.102.144.38", port = 9999 }
-url_to_path = { cmd = "gallery-dl --directory '{2}' '{1}'", target = "remote", ip = "100.102.144.38", port = 9999 }
+url = { cmd = "mkdir -p ~/Server/Images && cd ~/Server/Images && gallery-dl '{1}'", target = "remote", ip = "100.102.144.38", port = 9999 }
+url_to_path = { cmd = "mkdir -p ~/Server/Images/'{2}' && cd ~/Server/Images && gallery-dl --directory '{2}' '{1}'", target = "remote", ip = "100.102.144.38", port = 9999 }
