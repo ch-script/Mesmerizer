@@ -1,8 +1,9 @@
 mod db;
 
+use std::fs::{File, OpenOptions};
 use std::io::{BufRead, BufReader};
 use std::net::{TcpListener, TcpStream};
-use std::process::Command;
+use std::process::{Command, Stdio};
 use std::thread;
 use rusqlite::Connection; // Added for database interaction
 
@@ -33,17 +34,37 @@ fn handle_client(stream: TcpStream) {
                     eprintln!("[SQLite] Error connecting to database within thread.");
                 }
 
-                // Execute the command in the background
-                match Command::new("sh")
-                    .arg("-c")
-                    .arg(cmd)
-                    .spawn()
-                {
-                    Ok(child) => {
-                        println!("[sntd] Process started in background with PID: {}", child.id());
-                    }
+                // Log data
+                let log_dir = "/zroot/media/.data";
+                let _ = std::fs::create_dir_all(log_dir);
+                let log_path = format!("{}/daemon.log", log_dir);
+
+                let log_file = OpenOptions::new()
+                    .create(true)
+                    .append(true)
+                    .open(&log_path);
+
+                match log_file {
+                    Ok(file) => {
+                        let file_err = file.try_clone().expect("Failed to clone log file handle");
+                        // Execute the command in the background
+                        match Command::new("sh")
+                            .arg("-c")
+                            .arg(cmd)
+                            .stdout(Stdio::from(file))
+                            .stderr(Stdio::from(file_err))
+                            .spawn()
+                        {
+                            Ok(child) => {
+                                println!("[sntd] Process started in background with PID: {}. Logging to {}", child.id(), log_path);
+                            }
+                            Err(e) => {
+                                eprintln!("[sntd] Failed to execute command: {}", e);
+                            }
+                        }
+                    },
                     Err(e) => {
-                        eprintln!("[sntd] Failed to execute command: {}", e);
+                        eprintln!("[sntd] Failed to open log file {}: {}. Command will not be executed.", log_path, e);
                     }
                 }
             }
