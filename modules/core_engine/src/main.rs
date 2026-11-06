@@ -5,7 +5,6 @@ use std::net::{TcpListener, TcpStream};
 use std::process::Command;
 use std::thread;
 use rusqlite::Connection; // Added for database interaction
-use std::env;
 
 /// Handles an individual client connection in isolation
 fn handle_client(stream: TcpStream) {
