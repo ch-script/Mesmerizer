@@ -17,8 +17,8 @@ fn handle_client(stream: TcpStream) {
 
             if !cmd.is_empty() {
                 println!("[sntd] Command received: {}", cmd);
-
-                // 1. Log the incoming job into the SQLite database
+                // in the following order:
+                // Log the incoming job into the SQLite database
                 if let Ok(conn) = Connection::open("mesmerizer.db") {
                     match conn.execute(
                         "INSERT INTO downloads (command, status) VALUES (?1, ?2)",
@@ -31,7 +31,7 @@ fn handle_client(stream: TcpStream) {
                     eprintln!("[SQLite] Error connecting to database within thread.");
                 }
 
-                // 2. Execute the command in the background
+                // Execute the command in the background
                 match Command::new("sh")
                     .arg("-c")
                     .arg(cmd)
